@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tab Generator</title>
+
+<style>
+body{
+  margin:0;
+  padding:30px;
+  font-family:system-ui;
+  background:#f4f6f8;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:40px;
+  max-width:1400px;
+  margin:auto;
+}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+}
+
+.controls{
+  background:#fff;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.08);
+}
+
+.tit h2{text-align:center;}
+.group{margin-bottom:25px;}
+
+label{font-weight:600;margin-bottom:6px;display:block;}
+input, textarea{width:100%;}
+textarea{min-height:70px;}
+
+.wrapper-editor{
+  border:1px solid #ddd;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+.checkbox-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  margin-bottom:10px;
+  font-weight:600;
+}
+
+.checkbox-label input{
+  width:18px;height:18px;
+}
+
+.dropzone{
+  border:2px dashed #ccc;
+  padding:15px;
+  text-align:center;
+  margin-top:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.dropzone.dragover{
+  border-color:#4f46e5;
+  background:#f0f0ff;
+}
+
+.upload-success{
+  color:#16a34a;
+  font-size:13px;
+  margin-top:6px;
+}
+
+.alt-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:10px;
+}
+
+.alt-row input{flex:1;}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.primary{background:#4f46e5;color:white;}
+
+.preview{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+.preview-frame{
+  padding:20px;
+  box-sizing:border-box;
+}
+
+.wrapper{margin-bottom:16px;}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(80px,1fr));
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.step{
+  background:#f2f2f2; /* default inactive */
+  color: #000000;
+  border-radius: var(--dynamic-radius, 14px);
+  padding:14px 10px;
+  text-align:center;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+  transition:.25s ease;
+  font-size:17px;
+}
+.step[aria-selected="true"]{
+  background: var(--tab-active-bg, #1b1c38);
+  color: var(--tab-active-text, #ffffff); 
+}
+.step:hover{
+  transform:translateY(-2px);
+}
+
+
+
+[role="tabpanel"]{
+  background:#ffffff;
+  border-radius: var(--dynamic-radius, 18px);
+  padding:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+  line-height: 1.5;
+}
+
+[role="tabpanel"] img{
+  width:100%;
+  display:block;
+  margin-top:16px;
+  border-radius: var(--dynamic-radius, 16px);
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="controls">
+
+<div class="group">
+<div class="tit"><h2>Tab</h2></div>
+
+<label>Background Color</label>
+<input type="color" id="accentColor" value="#dd533a">
+
+<label>Button Color</label>
+<input type="color" id="cardColor" value="#1b1c38">
+
+<label>Text Color</label>
+<input type="color" id="textColor" value="#ffffff">
+</div>
+
+<div class="group">
+<label>Width</label>
+<input type="range" id="widthRange" min="280" max="800" value="420">
+
+<label>Border Radius</label>
+<input type="range" id="radiusRange" min="0" max="32" value="16">
+</div>
+
+<div class="group">
+<div id="wrapperEditors"></div>
+<button id="addWrapperBtn">Add Wrapper</button>
+</div>
+
+<button class="primary" id="downloadBtn">Download HTML</button>
+
+</div>
+
+<div class="preview">
+<div class="preview-frame" id="previewFrame"></div>
+</div>
+
+
+
+</div>
+
+<script>
+let wrappers=[];
+
+function createWrapper(){
+  wrappers.push({
+    title:"Tab Title",
+    content:"Tab content",
+    showImage:false,
+    imageFile:null,
+    imageName:null,
+    altText:"",
+    uploadSuccess:false
+  });
+  renderEditors();
+  renderPreview();
+}
+
+function renderEditors(){
+  wrapperEditors.innerHTML="";
+  wrappers.forEach((w,i)=>{
+    const div=document.createElement("div");
+    div.className="wrapper-editor";
+
+    div.innerHTML=`
+      <label class="checkbox-label">
+        <input type="checkbox" ${w.showImage?"checked":""}>
+        Show Image
+      </label>
+
+      <label>Title</label>
+      <input type="text" value="${w.title}">
+
+      <label>Content</label>
+      <textarea>${w.content}</textarea>
+
+      ${w.showImage?`
+        <div class="alt-row">
+          <div style="flex:1;">
+            <div class="dropzone">Drag & Drop Image Here</div>
+            ${w.uploadSuccess?`<div class="upload-success">✔ Image uploaded successfully</div>`:""}
+          </div>
+          <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
+        </div>
+      `:""}
+    `;
+
+    const checkbox=div.querySelector('input[type="checkbox"]');
+    const titleInput=div.querySelectorAll("input")[1];
+    const contentInput=div.querySelector("textarea");
+    const dropzone=div.querySelector(".dropzone");
+    const altInput=div.querySelector('.alt-row input[type="text"]');
+
+    checkbox.onchange=()=>{
+      wrappers[i].showImage=checkbox.checked;
+      renderEditors();
+      renderPreview();
+    };
+
+    titleInput.oninput=()=>{wrappers[i].title=titleInput.value;renderPreview();}
+    contentInput.oninput=()=>{wrappers[i].content=contentInput.value;renderPreview();}
+    if(altInput){
+      altInput.oninput=()=>{wrappers[i].altText=altInput.value;renderPreview();}
+    }
+
+    if(dropzone){
+      dropzone.addEventListener("dragover",e=>{
+        e.preventDefault();
+        dropzone.classList.add("dragover");
+      });
+
+      dropzone.addEventListener("dragleave",()=>dropzone.classList.remove("dragover"));
+
+      dropzone.addEventListener("drop",e=>{
+        e.preventDefault();
+        dropzone.classList.remove("dragover");
+        const file=e.dataTransfer.files[0];
+        if(file && file.type.startsWith("image/")){
+          wrappers[i].imageFile=file;
+          wrappers[i].imageName=file.name;
+          wrappers[i].uploadSuccess=true;
+          renderEditors();
+          renderPreview();
+        }
+      });
+    }
+
+    wrapperEditors.appendChild(div);
+  });
+}
+
+function renderPreview(){
+  previewFrame.innerHTML="";
+  previewFrame.style.width=widthRange.value+"px";
+  previewFrame.style.background=accentColor.value;
+  previewFrame.style.borderRadius=radiusRange.value+"px";
+  previewFrame.style.padding="20px";
+  previewFrame.style.boxSizing="border-box";
+  previewFrame.style.setProperty('--dynamic-radius', radiusRange.value + "px");
+  previewFrame.style.setProperty('--tab-active-bg', cardColor.value);
+previewFrame.style.setProperty('--tab-active-text', textColor.value);
+  const wrapper=document.createElement("div");
+  wrapper.className="wrapper";
+
+  const steps=document.createElement("div");
+  steps.className="steps";
+  steps.setAttribute("role","tablist");
+
+  const panelsContainer=document.createElement("div");
+
+  wrappers.forEach((w,i)=>{
+
+    const btn=document.createElement("button");
+    btn.className="step";
+	btn.style.borderRadius = radiusRange.value + "px";
+    btn.textContent=w.title;
+    btn.setAttribute("role","tab");
+    btn.id="tab-"+i;
+    btn.setAttribute("aria-selected",i===0?"true":"false");
+    btn.setAttribute("aria-controls","panel-"+i);
+    btn.tabIndex=i===0?0:-1;
+
+    steps.appendChild(btn);
+
+    const panel=document.createElement("div");
+    panel.id="panel-"+i;
+    panel.setAttribute("role","tabpanel");
+	panel.style.borderRadius = radiusRange.value + "px";
+    panel.setAttribute("aria-labelledby","tab-"+i);
+    if(i!==0) panel.hidden=true;
+
+    let imageHTML="";
+    if(w.showImage && w.imageFile){
+      const url=URL.createObjectURL(w.imageFile);
+      const altAttr=w.altText.trim()?`alt="${w.altText}"`:"";
+      imageHTML=`<img src="${url}" ${altAttr} style="width:100%;margin-top:12px;border-radius:${radiusRange.value}px;">`;
+    }
+
+    panel.innerHTML=`
+      <h2>${w.title}</h2>
+      <p>${w.content}</p>
+      ${imageHTML}
+    `;
+
+    panelsContainer.appendChild(panel);
+  });
+
+  wrapper.appendChild(steps);
+  wrapper.appendChild(panelsContainer);
+  previewFrame.appendChild(wrapper);
+
+  setupTabs(wrapper);
+  setMaxPanelHeight(wrapper);
+}
+
+function setupTabs(scope){
+
+  const tabs = scope.querySelectorAll('[role="tab"]');
+  const panels = scope.querySelectorAll('[role="tabpanel"]');
+
+  function activateTab(index, setFocus=true){
+    tabs.forEach((tab,i)=>{
+      const selected=i===index;
+      tab.setAttribute("aria-selected",selected);
+      tab.tabIndex=selected?0:-1;
+      panels[i].hidden=!selected;
+    });
+    if(setFocus) tabs[index].focus();
+  }
+
+  tabs.forEach((tab,index)=>{
+
+    tab.addEventListener("click",()=>activateTab(index));
+
+    tab.addEventListener("keydown",e=>{
+      let newIndex=index;
+
+      if(e.key==="ArrowRight") newIndex=(index+1)%tabs.length;
+      if(e.key==="ArrowLeft") newIndex=(index-1+tabs.length)%tabs.length;
+
+      if(newIndex!==index){
+        e.preventDefault();
+        activateTab(newIndex);
+      }
+    });
+
+  });
+}
+
+function setMaxPanelHeight(scope){
+
+  const panels = scope.querySelectorAll('[role="tabpanel"]');
+  let maxHeight=0;
+
+  panels.forEach(panel=>{
+    panel.hidden=false;
+    const height=panel.offsetHeight;
+    if(height>maxHeight) maxHeight=height;
+    panel.hidden=true;
+  });
+
+  panels[0].hidden=false;
+
+  panels.forEach(panel=>{
+    panel.style.minHeight=maxHeight+"px";
+  });
+}
+
+
+
+downloadBtn.onclick = function () {
+
+  const clone = previewFrame.cloneNode(true);
+
+  // Preserve inline width & radius
+  clone.style.width = previewFrame.style.width;
+  clone.style.background = previewFrame.style.background;
+  clone.style.borderRadius = previewFrame.style.borderRadius;
+  clone.style.padding = previewFrame.style.padding;
+  clone.style.boxSizing = "border-box";
+
+  const images = clone.querySelectorAll("img");
+  let fileCounter = 1;
+
+  images.forEach((img, index) => {
+    const w = wrappers[index];
+
+    if (w && w.imageFile) {
+
+      const extension = w.imageFile.name.split('.').pop();
+      const newFileName = `file${fileCounter}.${extension}`;
+
+      img.src = newFileName;
+
+      const imageLink = document.createElement("a");
+      imageLink.href = URL.createObjectURL(w.imageFile);
+      imageLink.download = newFileName;
+      imageLink.click();
+
+      fileCounter++;
+    }
+  });
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:#ffffff;
+  font-family:system-ui;
+}
+
+${document.querySelector("style").innerHTML}
+</style>
+</head>
+
+<body>
+${clone.outerHTML}
+
+<script>
+const tabs = document.querySelectorAll('[role="tab"]');
+const panels = document.querySelectorAll('[role="tabpanel"]');
+
+function activateTab(index, setFocus=true){
+  tabs.forEach((tab,i)=>{
+    const selected=i===index;
+    tab.setAttribute("aria-selected",selected);
+    tab.tabIndex=selected?0:-1;
+    panels[i].hidden=!selected;
+  });
+
+  if(setFocus) tabs[index].focus();
+}
+
+// 🔥 Force first tab active on load
+activateTab(0, false);
+
+tabs.forEach((tab,index)=>{
+  tab.addEventListener("click",()=>activateTab(index,true));
+
+  tab.addEventListener("keydown",e=>{
+    let newIndex=index;
+
+    if(e.key==="ArrowRight") newIndex=(index+1)%tabs.length;
+    if(e.key==="ArrowLeft") newIndex=(index-1+tabs.length)%tabs.length;
+
+    if(newIndex!==index){
+      e.preventDefault();
+      activateTab(newIndex,true);
+    }
+  });
+});
+<\/script>
+
+</body>
+</html>
+`;
+
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "index.html";
+  a.click();
+};
+cardColor.oninput=
+accentColor.oninput=
+textColor.oninput=
+widthRange.oninput=
+radiusRange.oninput=renderPreview;
+addWrapperBtn.onclick=createWrapper;
+createWrapper();
+renderPreview();
+</script>
+
+</body>
+</html>

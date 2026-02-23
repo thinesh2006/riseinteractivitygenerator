@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:linear-gradient(135deg,#eef2ff,#ffffff);
+  padding:40px;
+  height:90vh;
+
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.hero h1{
+  font-size:36px;
+  margin-bottom:10px;
+  background:linear-gradient(45deg,#6c63ff,#00c6ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+  font-size:18px;
+  color:#555;
+  max-width:700px;
+  margin:auto;
+  line-height: 27.3px;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+}
+
+.card{
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  transition:0.3s ease;
+  cursor:pointer;
+  text-align:center;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.card-icon{
+  font-size:40px;
+  margin-bottom:15px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.card p{
+  font-size:14px;
+  color:#666;
+}
+
+.footer-note{
+  margin-top:50px;
+  text-align:center;
+  font-size:14px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <h1>Articulate Rise Interactivity Generator</h1>
+  <p>
+    Build powerful and customized Rise interactions effortlessly.
+    Create dynamic learning experiences with beautifully structured interactive components.
+  </p>
+</div>
+
+<div class="features">
+
+  <div class="card" onclick="guide('Accordion')">
+    <div class="card-icon">📂</div>
+    <h3>Accordion Builder</h3>
+    <p>Create structured expandable content blocks with smooth transitions and customization options.</p>
+  </div>
+
+  <div class="card" onclick="guide('Tab')">
+    <div class="card-icon">📑</div>
+    <h3>Tab Interaction</h3>
+    <p>Design interactive tab layouts with flexible styling and responsive behavior.</p>
+  </div>
+
+  <div class="card" onclick="guide('Flip')">
+    <div class="card-icon">🔄</div>
+    <h3>Flip Cards</h3>
+    <p>Generate engaging flip card interactions for microlearning.</p>
+  </div>
+
+  <div class="card" onclick="guide('Text-Entry')">
+    <div class="card-icon">⌨️</div>
+    <h3>Text Entry</h3>
+    <p>Build customizable text-entry interactions for learner responses.</p>
+  </div>
+
+  <div class="card" onclick="guide('Certificate')">
+    <div class="card-icon">🎓</div>
+    <h3>Certificate Generator</h3>
+    <p>Create fully customized certificates and generate downloadable outputs instantly.</p>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  Crafted for seamless Rise development workflows.
+</div>
+<script>
+function guide(pageName){
+
+  // Send message to parent safely
+  window.parent.postMessage({
+    type: "highlight",
+    page: pageName
+  }, "*");
+
+  showHint("Use the '" + pageName + "' button in the sidebar to continue 👈");
+}
+</script>
+<script>
+
+function showHint(message){
+  const hint = document.createElement("div");
+  hint.innerText = message;
+
+  hint.style.position="fixed";
+  hint.style.bottom="30px";
+  hint.style.left="50%";
+  hint.style.transform="translateX(-50%)";
+  hint.style.background="linear-gradient(45deg,#6c63ff,#00c6ff)";
+  hint.style.color="white";
+  hint.style.padding="14px 25px";
+  hint.style.borderRadius="30px";
+  hint.style.boxShadow="0 10px 25px rgba(0,0,0,0.2)";
+  hint.style.zIndex="9999";
+  hint.style.fontWeight="600";
+  hint.style.animation="fadeIn 0.3s ease";
+
+  document.body.appendChild(hint);
+
+  setTimeout(()=>{
+    hint.remove();
+  },3000);
+}
+</script>
+</body>
+</html>

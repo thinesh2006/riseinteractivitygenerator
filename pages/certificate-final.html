@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rise ZIP Script Injector</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+body{
+  font-family:system-ui;
+  background:#f4f6f9;
+  padding: 40px 20px;
+
+}
+.container{
+  max-width:650px;
+  margin:auto;
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+h1{text-align:center;}
+label{display:block;margin-top:20px;font-weight:600;margin-bottom: 5px;}
+button{
+  margin-top:30px;
+  width:100%;
+  padding:14px;
+  background:#1b1464;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+.status{margin-top:20px;text-align:center;}
+.success{color:green;}
+.error{color:red;}
+.signature{
+  margin: 30px auto 0;
+  text-align: center;
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-weight: 600;
+  color: #1b1464;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 18px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  width: fit-content;
+  transition: all .25s ease;
+}
+
+.signature:hover{
+  transform: translateY(-3px) scale(1.05);
+  opacity: 1;
+}
+
+@media (max-width: 480px){
+  .signature{
+    bottom: 15px;
+    right: 15px;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+
+.emoji{
+  position: fixed;
+  font-size: 28px;
+  pointer-events: none;
+  animation: floatUp 1.5s ease forwards;
+}
+
+@keyframes floatUp{
+  0%{
+    opacity:1;
+    transform: translateY(0) scale(1);
+  }
+  100%{
+    opacity:0;
+    transform: translateY(-80px) scale(1.6);
+  }
+}
+button:active{
+  transform: scale(0.98);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Rise ZIP Script Injector</h1>
+
+  <label>Upload Rise ZIP</label>
+  <input type="file" id="zipInput" accept=".zip">
+
+  <label>Upload Triggers.js</label>
+  <input type="file" id="triggersInput" accept=".js">
+
+  <label>Upload Observer.js</label>
+  <input type="file" id="observerInput" accept=".js">
+
+  <button onclick="processZip()">Process & Download</button>
+
+  <div id="status" class="status"></div>
+</div>
+
+<script>
+
+async function processZip(){
+
+  const zipFile = document.getElementById("zipInput").files[0];
+  const triggersFile = document.getElementById("triggersInput").files[0];
+  const observerFile = document.getElementById("observerInput").files[0];
+  const status = document.getElementById("status");
+
+  if(!zipFile || !triggersFile || !observerFile){
+    status.innerHTML = "Please upload all required files.";
+    status.className = "status error";
+    return;
+  }
+
+  status.innerHTML = "Processing...";
+  status.className = "status";
+
+  try {
+
+    const zip = await JSZip.loadAsync(zipFile);
+
+    let indexPath = null;
+
+    zip.forEach((path)=>{
+      if(path.toLowerCase().endsWith("index.html")){
+        indexPath = path;
+      }
+    });
+
+    if(!indexPath){
+      throw new Error("index.html not found inside ZIP.");
+    }
+
+    let htmlContent = await zip.file(indexPath).async("string");
+
+    // --- SAFE DOM PARSING (NO STRING BODY MATCHING) ---
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, "text/html");
+
+    // Remove old injected scripts if present
+    const oldTriggers = doc.querySelector('script[src="Triggers.js"]');
+    const oldObserver = doc.querySelector('script[src="Observer.js"]');
+    if(oldTriggers) oldTriggers.remove();
+    if(oldObserver) oldObserver.remove();
+
+    // Create new script elements
+    const script1 = doc.createElement("script");
+    script1.setAttribute("src","Triggers.js");
+
+    const script2 = doc.createElement("script");
+    script2.setAttribute("src","Observer.js");
+
+    doc.body.appendChild(script1);
+    doc.body.appendChild(script2);
+
+    // Serialize back to HTML
+    const updatedHTML = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+
+    zip.file(indexPath, updatedHTML);
+
+    // Add JS files to root
+    const triggersContent = await triggersFile.text();
+    const observerContent = await observerFile.text();
+
+    zip.file("content/Triggers.js", triggersContent);
+    zip.file("content/Observer.js", observerContent);
+
+    const blob = await zip.generateAsync({type:"blob"});
+    saveAs(blob,"updated-rise-package.zip");
+
+    status.innerHTML = "ZIP updated successfully!";
+    status.className = "status success";
+	launchConfetti();
+
+
+  } catch(err){
+    status.innerHTML = "Error: " + err.message;
+    status.className = "status error";
+  }
+}
+
+</script>
+<script>
+function launchConfetti(){
+
+  const duration = 2000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({
+      particleCount: 8,
+      angle: 60,
+      spread: 80,
+      origin: { x: 0 }
+    });
+
+    confetti({
+      particleCount: 8,
+      angle: 120,
+      spread: 80,
+      origin: { x: 1 }
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+</script>
+
+
+
+</body>
+</html>
