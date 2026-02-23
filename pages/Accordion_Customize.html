@@ -26,17 +26,81 @@ body{
 }
 
 .controls{
-  background:#fff;
-  padding:25px;
-  border-radius:18px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.08);
+  background:#ffffff;
+  padding:28px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+  
 }
 
 .tit h2{text-align:center;}
-.group{margin-bottom:25px;}
+.group{
+  
+  padding-bottom:28px;
+}
+.group-title{
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:#6b7280;
+  margin-bottom:14px;
+}
 
-label{font-weight:600;margin-bottom:6px;display:block;}
-input, textarea{width:100%;}
+.field{
+  display:grid;
+  grid-template-columns: 140px 1fr;
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.field label{
+  font-size:14px;
+  font-weight:600;
+  color:#374151;
+}
+
+.field input[type="color"],
+.field select{
+  justify-self:start;
+}
+
+.field input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:4px;
+  background:#e5e7eb;
+  outline:none;
+}
+
+.field input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+}
+
+.field input[type="range"]::-moz-range-thumb{
+  width:16px;
+  height:16px;
+  border:none;
+  border-radius:50%;
+  background:#4f46e5;
+}
+
+.field input[type="color"]{
+  width:214px;
+}
+.group:last-child{
+  border-bottom:none;
+}
+
+label{font-size:14px;font-weight:600;margin-bottom:3px;display:block;letter-spacing:0.3px;padding-top:10px;}
+textarea{width:100%;}
 textarea{min-height:70px;}
 
 .wrapper-editor{
@@ -79,14 +143,23 @@ textarea{min-height:70px;}
   margin-top:6px;
 }
 
+
+
 .alt-row{
-  display:flex;
+  display:grid;
+  grid-template-columns: 2fr 1fr;
   gap:10px;
-  align-items:center;
   margin-top:10px;
 }
 
-.alt-row input{flex:1;}
+.alt-row input[type="file"]{
+  flex:2;
+}
+
+.alt-row input[type="text"]{
+  flex:1;
+  max-width:180px;
+}
 
 button{
   width:100%;
@@ -126,12 +199,22 @@ button{
   margin:0;
   font-size:18px;
 }
-
+.accordion h1,
+.accordion h2,
+.accordion h3,
+.accordion h4,
+.accordion h5,
+.accordion h6{
+  margin:0;
+  padding:0;
+  font-size:18px;
+  font-weight:700;
+}
 .panel{
-  max-height:0;
+  height:0;
   overflow:hidden;
   opacity:0;
-  transition:max-height .4s ease, opacity .3s ease;
+  transition:height .4s ease, opacity .3s ease;
   padding:0 16px;
   line-height:1.6;
 }
@@ -142,8 +225,127 @@ button{
   margin:16px 0;
 }
 
+.file-btn{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#4f46e5;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.file-btn:hover{
+  opacity:0.9;
+}
+input[type="file"]{
+  width:100%;
+  margin-top:6px;
+}
+
+.image-btn{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#4f46e5;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.image-btn:hover{
+  opacity:0.9;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:6px;
+  border-radius:6px;
+  background:linear-gradient(to right,#4f46e5 0%,#4f46e5 50%,#e5e7eb 50%,#e5e7eb 100%);
+  outline:none;
+  margin:10px 0 20px 0;
+  transition:background 0.3s ease;
+}
+
+/* Chrome / Edge */
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(79,70,229,0.3);
+  transition:transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover{
+  transform:scale(1.1);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb{
+  width:18px;
+  height:18px;
+  border:none;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+}
+
+label span{
+  font-weight:700;
+  color:#4f46e5;
+}
 
 
+
+.slider-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:8px;
+  color:#374151;
+}
+
+.slider-header span:last-child{
+  color:#4f46e5;
+  font-weight:700;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:4px;
+  background:#e5e7eb;
+  outline:none;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+  margin-top:-6px; /* IMPORTANT alignment fix */
+}
+
+input[type="range"]::-moz-range-thumb{
+  width:16px;
+  height:16px;
+  border:none;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -154,26 +356,70 @@ button{
 <div class="controls">
 
 <div class="group">
-<div class="tit"><h2>Accordion</h2></div>
+  <div class="group-title">Design Settings</div>
 
-<label>Background Color</label>
-<input type="color" id="accentColor" value="#dd533a">
+  <div class="field">
+    <label>Background:</label>
+	 <input type="color" id="accentColor" value="#dd533a">
+  </div>
 
-<label>Button Color</label>
-<input type="color" id="cardColor" value="#1b1c38">
+  <div class="field">
+    <label>Button Color</label>
+    <input type="color" id="cardColor" value="#1b1c38">
+  </div>
 
-<label>Text Color</label>
-<input type="color" id="textColor" value="#ffffff">
+  <div class="field">
+    <label>Text Color</label>
+    <input type="color" id="textColor" value="#ffffff">
+  </div>
+
+  <div class="field">
+    <label>Heading Level</label>
+    <select id="headingLevelSelect">
+      <option value="h1">H1</option>
+      <option value="h2" selected>H2</option>
+      <option value="h3">H3</option>
+      <option value="h4">H4</option>
+      <option value="h5">H5</option>
+      <option value="h6">H6</option>
+    </select>
+  </div>
 </div>
-
 <div class="group">
-<label>Width</label>
-<input type="range" id="widthRange" min="280" max="800" value="420">
+  <div class="group-title">Typography & Layout</div>
 
-<label>Border Radius</label>
-<input type="range" id="radiusRange" min="0" max="32" value="16">
+  <div class="slider-field">
+  <div class="slider-header">
+    <span>Title Size</span>
+    <span id="titleSizeValue">17px</span>
+  </div>
+  <input type="range" id="titleFontSizeRange" min="12" max="40" value="18">
 </div>
 
+  <div class="slider-field">
+  <div class="slider-header">
+    <span>Body Size</span>
+    <span id="bodySizeValue">16px</span>
+  </div>
+  <input type="range" id="bodyFontSizeRange" min="12" max="30" value="16">
+</div>
+
+  <div class="slider-field">
+  <div class="slider-header">
+    <span>Width</span>
+    <span id="widthValue">420px</span>
+  </div>
+  <input type="range" id="widthRange" min="280" max="800" value="420">
+</div>
+
+  <div class="slider-field">
+  <div class="slider-header">
+    <span>Radius</span>
+    <span id="radiusValue">16px</span>
+  </div>
+  <input type="range" id="radiusRange" min="0" max="32" value="16">
+</div>
+</div>
 <div class="group">
 <div id="wrapperEditors"></div>
 <button id="addWrapperBtn">Add Wrapper</button>
@@ -192,9 +438,20 @@ button{
 </div>
 
 <script>
+let globalHeadingLevel = "h2";
+let titleFontSize = 18;
+let bodyFontSize = 16;
 let wrappers=[];
-
+function updateRangeFill(range){
+  const percent = (range.value - range.min) / (range.max - range.min) * 100;
+  range.style.background =
+    `linear-gradient(to right,#4f46e5 0%,#4f46e5 ${percent}%,#e5e7eb ${percent}%,#e5e7eb 100%)`;
+}
 function createWrapper(){
+
+  // Save current scroll position
+  const scrollY = window.scrollY;
+
   wrappers.push({
     title:"Accordion Title",
     content:"Accordion content",
@@ -202,10 +459,13 @@ function createWrapper(){
     imageFile:null,
     imageName:null,
     altText:"",
-    uploadSuccess:false
   });
+
   renderEditors();
   renderPreview();
+
+  // Restore scroll position
+  window.scrollTo(0, scrollY);
 }
 
 function renderEditors(){
@@ -217,32 +477,58 @@ function renderEditors(){
     div.innerHTML=`
       <label class="checkbox-label">
         <input type="checkbox" ${w.showImage?"checked":""}>
-        Show Image
+        Add Image
       </label>
-
       <label>Title</label>
-      <input type="text" value="${w.title}">
+      <input type="text" class="title-input" value="${w.title}">
 
       <label>Content</label>
       <textarea>${w.content}</textarea>
 
       ${w.showImage?`
-        <div class="alt-row">
-          <div style="flex:1;">
-            <div class="dropzone">Drag & Drop Image Here</div>
-            ${w.uploadSuccess?`<div class="upload-success">✔ Image uploaded successfully</div>`:""}
-          </div>
-          <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
-        </div>
-      `:""}
+  <div class="alt-row">
+    <div style="flex:1;">
+      
+      <button type="button" class="image-btn">
+        ${w.imageFile ? "Replace Image" : "Choose Image"}
+      </button>
+
+      <input type="file" accept="image/*" class="file-input" style="display:none;">
+
+      ${w.imageName ? `<div class="upload-success">✔ ${w.imageName}</div>` : ""}
+
+    </div>
+
+    <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
+  </div>
+`:""}
     `;
 
     const checkbox=div.querySelector('input[type="checkbox"]');
-    const titleInput=div.querySelectorAll("input")[1];
+    const titleInput = div.querySelector(".title-input");
     const contentInput=div.querySelector("textarea");
-    const dropzone=div.querySelector(".dropzone");
-    const altInput=div.querySelector('.alt-row input[type="text"]');
+    const altInput = div.querySelector('.alt-row input[type="text"]') || null;
+	const imageBtn = div.querySelector(".image-btn");
+const fileInput = div.querySelector(".file-input");
 
+if(imageBtn && fileInput){
+
+  imageBtn.onclick = () => {
+    fileInput.click();
+  };
+
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+
+    if(file && file.type.startsWith("image/")){
+      wrappers[i].imageFile = file;
+      wrappers[i].imageName = file.name;
+
+      renderEditors();   // refresh UI
+      renderPreview();   // refresh preview
+    }
+  };
+}
     checkbox.onchange=()=>{
       wrappers[i].showImage=checkbox.checked;
       renderEditors();
@@ -255,49 +541,50 @@ function renderEditors(){
       altInput.oninput=()=>{wrappers[i].altText=altInput.value;renderPreview();}
     }
 
-    if(dropzone){
-      dropzone.addEventListener("dragover",e=>{
-        e.preventDefault();
-        dropzone.classList.add("dragover");
-      });
-
-      dropzone.addEventListener("dragleave",()=>dropzone.classList.remove("dragover"));
-
-      dropzone.addEventListener("drop",e=>{
-        e.preventDefault();
-        dropzone.classList.remove("dragover");
-        const file=e.dataTransfer.files[0];
-        if(file && file.type.startsWith("image/")){
-          wrappers[i].imageFile=file;
-          wrappers[i].imageName=file.name;
-          wrappers[i].uploadSuccess=true;
-          renderEditors();
-          renderPreview();
-        }
-      });
-    }
-
     wrapperEditors.appendChild(div);
   });
 }
 
 function setupAccordion(scope){
-  scope.querySelectorAll(".accordion button").forEach(btn=>{
-    btn.onclick=()=>{
-      scope.querySelectorAll(".accordion button").forEach(b=>{
-        const panel=b.nextElementSibling;
-        if(b===btn && b.getAttribute("aria-expanded")==="false"){
-          b.setAttribute("aria-expanded","true");
-          panel.style.maxHeight=panel.scrollHeight+20+"px";
-          panel.style.opacity="1";
-          panel.style.padding="0 16px 24px 16px";
-        }else{
-          b.setAttribute("aria-expanded","false");
-          panel.style.maxHeight=null;
-          panel.style.opacity="0";
-          panel.style.padding="0 16px";
-        }
+
+  const buttons = scope.querySelectorAll(".accordion button");
+
+  buttons.forEach(btn => {
+
+    const panel = btn.nextElementSibling;
+
+    // Ensure closed initially
+    btn.setAttribute("aria-expanded", "false");
+    panel.style.height = "0px";
+    panel.style.opacity = "0";
+    panel.style.padding = "0 16px";
+    panel.style.transition = "height .4s ease, opacity .3s ease";
+
+    btn.onclick = () => {
+
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+
+      // Close all
+      buttons.forEach(b => {
+        const p = b.nextElementSibling;
+        b.setAttribute("aria-expanded", "false");
+        p.style.height = "0px";
+        p.style.opacity = "0";
+        p.style.padding = "0 16px";
       });
+
+      // Open clicked one
+      if (!isOpen) {
+
+        btn.setAttribute("aria-expanded", "true");
+
+        panel.style.padding = "0 16px 24px 16px";
+        panel.style.opacity = "1";
+
+        // Calculate exact height
+        const height = panel.scrollHeight;
+        panel.style.height = height + "px";
+      }
     };
   });
 }
@@ -318,12 +605,16 @@ function renderPreview(){
     accordion.style.borderRadius=radiusRange.value+"px";
     accordion.style.color=textColor.value;
 
-    const button=document.createElement("button");
-    button.innerHTML="<h2>"+w.title+"</h2>";
+    const button = document.createElement("button");
+const heading = document.createElement(globalHeadingLevel);
+heading.textContent = w.title;
+heading.style.fontSize = titleFontSize + "px";
+button.appendChild(heading);
     button.setAttribute("aria-expanded","false");
 
-    const panel=document.createElement("div");
-    panel.className="panel";
+  const panel=document.createElement("div");
+panel.className="panel";
+panel.style.fontSize = bodyFontSize + "px";;
 
     let imageHTML="";
     if(w.showImage && w.imageFile){
@@ -346,6 +637,26 @@ function renderPreview(){
 downloadBtn.onclick = async function () {
 
   const clone = previewFrame.cloneNode(true);
+  clone.querySelectorAll(".accordion").forEach(acc => {
+
+  const oldButton = acc.querySelector("button");
+  if (!oldButton) return;
+
+  const titleText = oldButton.textContent.trim();
+
+  // Create new structure: h2 > button
+ const newHeading = document.createElement(globalHeadingLevel);
+  const newButton = document.createElement("button");
+
+  newButton.textContent = titleText;
+  newButton.setAttribute("aria-expanded", "false");
+
+  newHeading.appendChild(newButton);
+
+  // Replace old button
+  acc.replaceChild(newHeading, oldButton);
+
+});
   const images = clone.querySelectorAll("img");
 
   let fileCounter = 1;
@@ -378,87 +689,143 @@ downloadBtn.onclick = async function () {
 
   const htmlContent = `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Accordion</title>
 <style>
 body{
-margin:0;
-display:flex;
-justify-content:center;
-align-items:center;
-font-family:system-ui;
-background:#ffffff;
+  margin:0;
+  font-family:system-ui;
+  background:#ffffff;
+  padding:40px 0;
 }
+
 .preview-frame{
-width:${widthRange.value}px;
-background:${accentColor.value};
-border-radius:${radiusRange.value}px;
-padding:20px;
-box-sizing:border-box;
+  width:${widthRange.value}px;
+  background:${accentColor.value};
+  border-radius:${radiusRange.value}px;
+  padding:20px;
+  box-sizing:border-box;
+  margin:auto;
 }
+
 .accordion{
-background:${cardColor.value};
-border-radius:${radiusRange.value}px;
-color:${textColor.value};
-overflow:hidden;
-margin-bottom:12px;
-transition:all .3s ease;
+  background:${cardColor.value};
+  border-radius:${radiusRange.value}px;
+  color:${textColor.value};
+  overflow:hidden;
+  margin-bottom:12px;
 }
+.accordion h1,
+.accordion h2,
+.accordion h3,
+.accordion h4,
+.accordion h5,
+.accordion h6{
+  margin:0;
+  padding:0;
+  font-size:18px;
+  font-weight:700;
+}
+
 .accordion button{
-all:unset;
-display:block;
-width:100%;
-padding:16px;
-cursor:pointer;
+  all:unset;
+  display:block;
+  width:100%;
+  padding:16px;
+  cursor:pointer;
 }
-.accordion button h2{
-margin:0;
-font-size:18px;
+
+.accordion button > *{
+  margin:0;
+  padding:0;
+  font-size:${titleFontSize}px;
+  font-weight:700;
 }
+
 .panel{
-max-height:0;
-overflow:hidden;
-opacity:0;
-transition:max-height .4s ease, opacity .3s ease;
-padding:0 16px;
-line-height:1.6;
+  font-size:${bodyFontSize}px;
+  height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:height .4s ease, opacity .3s ease;
+  padding:0 16px;
+  line-height:1.6;
 }
+
 .panel img{
-width:100%;
-display:block;
-margin:16px 0;
+  width:100%;
+  display:block;
+  margin:16px 0;
 }
 </style>
 </head>
 <body>
-
+<main>
 <div class="preview-frame">
 ${clone.innerHTML}
 </div>
 
 <script>
-document.querySelectorAll(".accordion button").forEach(btn=>{
-btn.onclick=()=>{
-document.querySelectorAll(".accordion button").forEach(b=>{
-const panel=b.nextElementSibling;
-if(b===btn && b.getAttribute("aria-expanded")==="false"){
-b.setAttribute("aria-expanded","true");
-panel.style.maxHeight=panel.scrollHeight+20+"px";
-panel.style.opacity="1";
-panel.style.padding="0 16px 24px 16px";
-}else{
-b.setAttribute("aria-expanded","false");
-panel.style.maxHeight=null;
-panel.style.opacity="0";
-panel.style.padding="0 16px";
-}
-});
-};
+const accordions = document.querySelectorAll(".accordion");
+
+accordions.forEach((acc, index) => {
+
+  const button = acc.querySelector("button");
+  const panel = acc.querySelector(".panel");
+
+  // Create unique ID
+  const panelId = "accordion-panel-" + index;
+  panel.id = panelId;
+
+  // Accessibility connection
+  button.setAttribute("aria-controls", panelId);
+  button.setAttribute("aria-expanded","false");
+
+  // Initial state
+  panel.style.height = "0px";
+  panel.style.opacity = "0";
+  panel.style.padding = "0 16px";
+
+  button.addEventListener("click", () => {
+
+    const isOpen = button.getAttribute("aria-expanded") === "true";
+
+    // Close all
+    document.querySelectorAll(".accordion").forEach((a,i) => {
+      const b = a.querySelector("button");
+      const p = a.querySelector(".panel");
+
+      b.setAttribute("aria-expanded","false");
+      p.style.height = "0px";
+      p.style.opacity = "0";
+      p.style.padding = "0 16px";
+    });
+
+    // Open clicked
+    if(!isOpen){
+
+      button.setAttribute("aria-expanded","true");
+
+      panel.style.padding = "0 16px 24px 16px";
+      panel.style.opacity = "1";
+
+      panel.style.height = "auto";
+      const height = panel.scrollHeight + "px";
+      panel.style.height = "0px";
+
+      requestAnimationFrame(()=>{
+        panel.style.height = height;
+      });
+    }
+
+  });
+
 });
 <\/script>
-
+</main>
 </body>
 </html>
 `;
@@ -469,13 +836,55 @@ panel.style.padding="0 16px";
   a.download = "index.html";
   a.click();
 };
-cardColor.oninput=
-accentColor.oninput=
-textColor.oninput=
-widthRange.oninput=
-radiusRange.oninput=renderPreview;
+cardColor.oninput =
+accentColor.oninput =
+textColor.oninput = renderPreview;
+
+// Width
+widthRange.oninput = () => {
+  widthValue.textContent = widthRange.value + "px";
+  updateRangeFill(widthRange);
+  renderPreview();
+};
+
+// Radius
+radiusRange.oninput = () => {
+  radiusValue.textContent = radiusRange.value + "px";
+  updateRangeFill(radiusRange);
+  renderPreview();
+};
+
+// Title Font
+titleFontSizeRange.oninput = () => {
+  titleFontSize = titleFontSizeRange.value;
+  titleSizeValue.textContent = titleFontSize + "px";
+  updateRangeFill(titleFontSizeRange);
+  renderPreview();
+};
+
+// Body Font
+bodyFontSizeRange.oninput = () => {
+  bodyFontSize = bodyFontSizeRange.value;
+  bodySizeValue.textContent = bodyFontSize + "px";
+  updateRangeFill(bodyFontSizeRange);
+  renderPreview();
+};
+
+// Heading Level
+headingLevelSelect.onchange = () => {
+  globalHeadingLevel = headingLevelSelect.value;
+  renderPreview();
+};
+
+updateRangeFill(widthRange);
+updateRangeFill(radiusRange);
+updateRangeFill(titleFontSizeRange);
+updateRangeFill(bodyFontSizeRange);
+
 addWrapperBtn.onclick=createWrapper;
 createWrapper();
+widthValue.textContent = widthRange.value + "px";
+radiusValue.textContent = radiusRange.value + "px";
 renderPreview();
 </script>
 
