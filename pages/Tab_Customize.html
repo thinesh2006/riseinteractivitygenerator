@@ -33,7 +33,81 @@ body{
 }
 
 .tit h2{text-align:center;}
-.group{margin-bottom:25px;}
+.group{padding-bottom:28px;}
+
+.group{
+  padding-bottom:28px;
+}
+
+.group-title{
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:#6b7280;
+  margin-bottom:14px;
+}
+
+.field{
+  display:grid;
+  grid-template-columns: 140px 1fr;
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.field label{
+  font-size:14px;
+  font-weight:600;
+  color:#374151;
+}
+
+.slider-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:8px;
+  color:#374151;
+}
+
+.slider-header span:last-child{
+  color:#4f46e5;
+  font-weight:700;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:4px;
+  background:#e5e7eb;
+  outline:none;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+  margin-top:-6px;
+}
+
+input[type="range"]::-moz-range-thumb{
+  width:16px;
+  height:16px;
+  border:none;
+  border-radius:50%;
+  background:#4f46e5;
+  cursor:pointer;
+}
+
+.field input[type="color"]{
+  width:214px;
+}
 
 label{font-weight:600;margin-bottom:6px;display:block;}
 input, textarea{width:100%;}
@@ -156,7 +230,20 @@ button{
   border-radius: var(--dynamic-radius, 16px);
 }
 
+.image-btn{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#4f46e5;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
 
+.image-btn:hover{
+  opacity:0.9;
+}
 
 </style>
 </head>
@@ -168,24 +255,58 @@ button{
 <div class="controls">
 
 <div class="group">
-<div class="tit"><h2>Tab</h2></div>
+  <div class="group-title">Design Settings</div>
 
-<label>Background Color</label>
-<input type="color" id="accentColor" value="#dd533a">
+  <div class="field">
+    <label>Background</label>
+    <input type="color" id="accentColor" value="#dd533a">
+  </div>
 
-<label>Button Color</label>
-<input type="color" id="cardColor" value="#1b1c38">
+  <div class="field">
+    <label>Active Button</label>
+    <input type="color" id="cardColor" value="#1b1c38">
+  </div>
 
-<label>Text Color</label>
-<input type="color" id="textColor" value="#ffffff">
+  <div class="field">
+    <label>Text Color</label>
+    <input type="color" id="textColor" value="#ffffff">
+  </div>
 </div>
 
 <div class="group">
-<label>Width</label>
-<input type="range" id="widthRange" min="280" max="800" value="420">
+  <div class="group-title">Typography & Layout</div>
 
-<label>Border Radius</label>
-<input type="range" id="radiusRange" min="0" max="32" value="16">
+  <div class="slider-field">
+    <div class="slider-header">
+      <span>Tab Title Size</span>
+      <span id="titleSizeValue">18px</span>
+    </div>
+    <input type="range" id="titleFontSizeRange" min="12" max="40" value="18">
+  </div>
+
+  <div class="slider-field">
+    <div class="slider-header">
+      <span>Tab Content Size</span>
+      <span id="bodySizeValue">16px</span>
+    </div>
+    <input type="range" id="bodyFontSizeRange" min="12" max="30" value="16">
+  </div>
+
+  <div class="slider-field">
+    <div class="slider-header">
+      <span>Width</span>
+      <span id="widthValue">420px</span>
+    </div>
+    <input type="range" id="widthRange" min="280" max="800" value="420">
+  </div>
+
+  <div class="slider-field">
+    <div class="slider-header">
+      <span>Radius</span>
+      <span id="radiusValue">16px</span>
+    </div>
+    <input type="range" id="radiusRange" min="0" max="32" value="16">
+  </div>
 </div>
 
 <div class="group">
@@ -206,8 +327,14 @@ button{
 </div>
 
 <script>
+let titleFontSize = 18;
+let bodyFontSize = 16;
 let wrappers=[];
-
+function updateRangeFill(range){
+  const percent = (range.value - range.min) / (range.max - range.min) * 100;
+  range.style.background =
+    `linear-gradient(to right,#4f46e5 0%,#4f46e5 ${percent}%,#e5e7eb ${percent}%,#e5e7eb 100%)`;
+}
 function createWrapper(){
   wrappers.push({
     title:"Tab Title",
@@ -241,20 +368,27 @@ function renderEditors(){
       <textarea>${w.content}</textarea>
 
       ${w.showImage?`
-        <div class="alt-row">
-          <div style="flex:1;">
-            <div class="dropzone">Drag & Drop Image Here</div>
-            ${w.uploadSuccess?`<div class="upload-success">✔ Image uploaded successfully</div>`:""}
-          </div>
-          <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
-        </div>
-      `:""}
+  <div class="alt-row">
+    <div style="flex:1;">
+
+      <button type="button" class="image-btn">
+        ${w.imageFile ? "Replace Image" : "Choose Image"}
+      </button>
+
+      <input type="file" accept="image/*" class="file-input" style="display:none;">
+
+      ${w.imageName ? `<div class="upload-success">✔ ${w.imageName}</div>` : ""}
+
+    </div>
+
+    <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
+  </div>
+`:""}
     `;
 
     const checkbox=div.querySelector('input[type="checkbox"]');
     const titleInput=div.querySelectorAll("input")[1];
     const contentInput=div.querySelector("textarea");
-    const dropzone=div.querySelector(".dropzone");
     const altInput=div.querySelector('.alt-row input[type="text"]');
 
     checkbox.onchange=()=>{
@@ -262,33 +396,33 @@ function renderEditors(){
       renderEditors();
       renderPreview();
     };
+	
+	const imageBtn = div.querySelector(".image-btn");
+const fileInput = div.querySelector(".file-input");
+
+if(imageBtn && fileInput){
+
+  imageBtn.onclick = () => {
+    fileInput.click();
+  };
+
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+
+    if(file && file.type.startsWith("image/")){
+      wrappers[i].imageFile = file;
+      wrappers[i].imageName = file.name;
+
+      renderEditors();
+      renderPreview();
+    }
+  };
+}
 
     titleInput.oninput=()=>{wrappers[i].title=titleInput.value;renderPreview();}
     contentInput.oninput=()=>{wrappers[i].content=contentInput.value;renderPreview();}
     if(altInput){
       altInput.oninput=()=>{wrappers[i].altText=altInput.value;renderPreview();}
-    }
-
-    if(dropzone){
-      dropzone.addEventListener("dragover",e=>{
-        e.preventDefault();
-        dropzone.classList.add("dragover");
-      });
-
-      dropzone.addEventListener("dragleave",()=>dropzone.classList.remove("dragover"));
-
-      dropzone.addEventListener("drop",e=>{
-        e.preventDefault();
-        dropzone.classList.remove("dragover");
-        const file=e.dataTransfer.files[0];
-        if(file && file.type.startsWith("image/")){
-          wrappers[i].imageFile=file;
-          wrappers[i].imageName=file.name;
-          wrappers[i].uploadSuccess=true;
-          renderEditors();
-          renderPreview();
-        }
-      });
     }
 
     wrapperEditors.appendChild(div);
@@ -319,7 +453,8 @@ previewFrame.style.setProperty('--tab-active-text', textColor.value);
     const btn=document.createElement("button");
     btn.className="step";
 	btn.style.borderRadius = radiusRange.value + "px";
-    btn.textContent=w.title;
+    btn.textContent = w.title;
+btn.style.fontSize = titleFontSize + "px";
     btn.setAttribute("role","tab");
     btn.id="tab-"+i;
     btn.setAttribute("aria-selected",i===0?"true":"false");
@@ -343,10 +478,11 @@ previewFrame.style.setProperty('--tab-active-text', textColor.value);
     }
 
     panel.innerHTML=`
-      <h2>${w.title}</h2>
-      <p>${w.content}</p>
-      ${imageHTML}
-    `;
+  <div style="font-size:${bodyFontSize}px">
+    ${w.content}
+  </div>
+  ${imageHTML}
+`;
 
     panelsContainer.appendChild(panel);
   });
@@ -449,10 +585,11 @@ downloadBtn.onclick = function () {
 
   const htmlContent = `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tab</title>
 <style>
 body{
   margin:0;
@@ -516,11 +653,43 @@ tabs.forEach((tab,index)=>{
   a.download = "index.html";
   a.click();
 };
-cardColor.oninput=
-accentColor.oninput=
-textColor.oninput=
-widthRange.oninput=
-radiusRange.oninput=renderPreview;
+// Title Font
+titleFontSizeRange.oninput = () => {
+  titleFontSize = titleFontSizeRange.value;
+  titleSizeValue.textContent = titleFontSize + "px";
+  updateRangeFill(titleFontSizeRange);
+  renderPreview();
+};
+
+// Body Font
+bodyFontSizeRange.oninput = () => {
+  bodyFontSize = bodyFontSizeRange.value;
+  bodySizeValue.textContent = bodyFontSize + "px";
+  updateRangeFill(bodyFontSizeRange);
+  renderPreview();
+};
+
+// Width
+widthRange.oninput = () => {
+  widthValue.textContent = widthRange.value + "px";
+  updateRangeFill(widthRange);
+  renderPreview();
+};
+
+// Radius
+radiusRange.oninput = () => {
+  radiusValue.textContent = radiusRange.value + "px";
+  updateRangeFill(radiusRange);
+  renderPreview();
+};
+
+updateRangeFill(titleFontSizeRange);
+updateRangeFill(bodyFontSizeRange);
+updateRangeFill(widthRange);
+updateRangeFill(radiusRange);
+accentColor.oninput = renderPreview;
+cardColor.oninput = renderPreview;
+textColor.oninput = renderPreview;
 addWrapperBtn.onclick=createWrapper;
 createWrapper();
 renderPreview();
