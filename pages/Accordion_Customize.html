@@ -159,7 +159,7 @@ textarea{min-height:70px;}
 
 .alt-row input[type="text"]{
   flex:1;
-  max-width:180px;
+  max-width:159px;
 }
 
 button{
@@ -348,6 +348,19 @@ input[type="range"]::-moz-range-thumb{
   background:#4f46e5;
   cursor:pointer;
 }
+.delete-wrapper-btn{
+  background:#ef4444;
+  color:white;
+  font-size:13px;
+  padding:6px 10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+
+.delete-wrapper-btn:hover{
+  opacity:0.9;
+}
 </style>
 </head>
 
@@ -427,7 +440,7 @@ input[type="range"]::-moz-range-thumb{
 <button id="addWrapperBtn">Add Wrapper</button>
 </div>
 
-<button class="primary" id="downloadBtn">Download HTML</button>
+<button class="primary" id="downloadBtn">Copy HTML</button>
 
 </div>
 
@@ -450,24 +463,24 @@ function updateRangeFill(range){
     `linear-gradient(to right,#4f46e5 0%,#4f46e5 ${percent}%,#e5e7eb ${percent}%,#e5e7eb 100%)`;
 }
 function createWrapper(){
-
-  // Save current scroll position
-  const scrollY = window.scrollY;
-
-  wrappers.push({
-    title:"Accordion Title",
-    content:"Accordion content",
-    showImage:false,
-    imageFile:null,
-    imageName:null,
-    altText:"",
-  });
+wrappers.push({
+  title:"Accordion Title",
+  content:"Accordion content",
+  showImage:false,
+  imageUrl:"",
+  altText:"",
+  showVideo:false,
+  videoUrl:""
+});
 
   renderEditors();
   renderPreview();
 
-  // Restore scroll position
-  window.scrollTo(0, scrollY);
+  // Move focus AFTER render
+  setTimeout(() => {
+    const titles = document.querySelectorAll(".title-input");
+    titles[titles.length - 1]?.focus();
+  }, 0);
 }
 
 function renderEditors(){
@@ -476,11 +489,22 @@ function renderEditors(){
     const div=document.createElement("div");
     div.className="wrapper-editor";
 
-    div.innerHTML=`
-      <label class="checkbox-label">
-        <input type="checkbox" ${w.showImage?"checked":""}>
-        Add Image
-      </label>
+    div.innerHTML=` <button type="button" class="delete-wrapper-btn" data-index="${i}">
+    Delete Wrapper
+  </button>
+	
+      <div style="display:flex; gap:20px; margin-bottom:10px;">
+  <label class="checkbox-label">
+    <input type="checkbox" class="image-checkbox" ${w.showImage?"checked":""}>
+    Add Image
+  </label>
+
+  <label class="checkbox-label">
+    <input type="checkbox" class="video-checkbox" ${w.showVideo?"checked":""}>
+    Add Video
+  </label>
+</div>
+	  
       <label>Title</label>
       <input type="text" class="title-input" value="${w.title}">
 
@@ -489,53 +513,73 @@ function renderEditors(){
 
       ${w.showImage?`
   <div class="alt-row">
-    <div style="flex:1;">
-      
-      <button type="button" class="image-btn">
-        ${w.imageFile ? "Replace Image" : "Choose Image"}
-      </button>
-
-      <input type="file" accept="image/*" class="file-input" style="display:none;">
-
-      ${w.imageName ? `<div class="upload-success">✔ ${w.imageName}</div>` : ""}
-
-    </div>
-
-    <input type="text" placeholder="Alt text (optional)" value="${w.altText}">
+    <input type="text" class="image-url-input"
+      placeholder="Enter Image URL (https://...)"
+      value="${w.imageUrl}">
+    <input type="text"
+  class="alt-text-input"
+  placeholder="Alt text (optional)"
+  value="${w.altText}">
+  </div>
+`:""}
+${w.showVideo?`
+  <div class="alt-row">
+    <input type="text" class="video-url-input"
+      placeholder="Enter Video URL (https://...)"
+      value="${w.videoUrl}">
   </div>
 `:""}
     `;
 
-    const checkbox=div.querySelector('input[type="checkbox"]');
+    const imageCheckbox = div.querySelector(".image-checkbox");
+const videoCheckbox = div.querySelector(".video-checkbox");
+imageCheckbox.onchange = () => {
+  wrappers[i].showImage = imageCheckbox.checked;
+  renderEditors();
+  renderPreview();
+};
+
+videoCheckbox.onchange = () => {
+  wrappers[i].showVideo = videoCheckbox.checked;
+  renderEditors();
+  renderPreview();
+};
     const titleInput = div.querySelector(".title-input");
     const contentInput=div.querySelector("textarea");
-    const altInput = div.querySelector('.alt-row input[type="text"]') || null;
-	const imageBtn = div.querySelector(".image-btn");
-const fileInput = div.querySelector(".file-input");
+    const altInput = div.querySelector(".alt-text-input");
+const imageUrlInput = div.querySelector(".image-url-input");
+const deleteBtn = div.querySelector(".delete-wrapper-btn");
+const videoUrlInput = div.querySelector(".video-url-input");
 
-if(imageBtn && fileInput){
-
-  imageBtn.onclick = () => {
-    fileInput.click();
-  };
-
-  fileInput.onchange = (e) => {
-    const file = e.target.files[0];
-
-    if(file && file.type.startsWith("image/")){
-      wrappers[i].imageFile = file;
-      wrappers[i].imageName = file.name;
-
-      renderEditors();   // refresh UI
-      renderPreview();   // refresh preview
-    }
+if(videoUrlInput){
+  videoUrlInput.oninput = () => {
+    wrappers[i].videoUrl = videoUrlInput.value.trim();
+    renderPreview();
   };
 }
-    checkbox.onchange=()=>{
-      wrappers[i].showImage=checkbox.checked;
-      renderEditors();
-      renderPreview();
-    };
+deleteBtn.onclick = (e) => {
+
+  const index = Number(e.target.dataset.index);
+
+  if(wrappers.length === 1){
+    alert("At least one wrapper is required.");
+    return;
+  }
+
+  wrappers.splice(index, 1);
+  renderEditors();
+  renderPreview();
+};
+
+if(imageUrlInput){
+  imageUrlInput.oninput = () => {
+    wrappers[i].imageUrl = imageUrlInput.value.trim();
+    renderPreview();
+  };
+}
+
+
+   
 
     titleInput.oninput=()=>{wrappers[i].title=titleInput.value;renderPreview();}
     contentInput.oninput=()=>{wrappers[i].content=contentInput.value;renderPreview();}
@@ -618,14 +662,22 @@ button.appendChild(heading);
 panel.className="panel";
 panel.style.fontSize = bodyFontSize + "px";;
 
-    let imageHTML="";
-    if(w.showImage && w.imageFile){
-      const url=URL.createObjectURL(w.imageFile);
-      const altAttr=w.altText.trim()?`alt="${w.altText}"`:"";
-      imageHTML=`<img src="${url}" ${altAttr} style="border-radius:${radiusRange.value}px;">`;
-    }
+  let mediaHTML = "";
 
-    panel.innerHTML=`${w.content}${imageHTML}`;
+if(w.showImage && w.imageUrl){
+  const altAttr = w.altText.trim() ? `alt="${w.altText}"` : "";
+  mediaHTML += `<img src="${w.imageUrl}" ${altAttr} style="border-radius:${radiusRange.value}px;">`;
+}
+
+if(w.showVideo && w.videoUrl){
+  mediaHTML += `
+    <video src="${w.videoUrl}" controls 
+      style="width:100%; margin-top:16px; border-radius:${radiusRange.value}px;">
+    </video>
+  `;
+}
+
+    panel.innerHTML=`${w.content}${mediaHTML}`;
 
     accordion.appendChild(button);
     accordion.appendChild(panel);
@@ -649,38 +701,9 @@ downloadBtn.onclick = async function () {
 clone.querySelectorAll("button").forEach(btn=>{
   btn.removeAttribute("style");
 });
-  const images = clone.querySelectorAll("img");
+  
 
-  let fileCounter = 1;
-
-  images.forEach((img, index) => {
-
-    const w = wrappers[index];
-
-    if (w && w.imageFile) {
-
-      // Get original extension
-      const extension = w.imageFile.name.split('.').pop();
-
-      // Create new file name
-      const newFileName = `file${fileCounter}.${extension}`;
-
-      // Update image src in exported HTML
-      img.src = newFileName;
-      img.removeAttribute("style");
-
-      // Download renamed image
-      const imageLink = document.createElement("a");
-      imageLink.href = URL.createObjectURL(w.imageFile);
-      imageLink.download = newFileName;
-      imageLink.click();
-
-      fileCounter++;
-    }
-  });
-
-  const htmlContent = `
-<!DOCTYPE html>
+  const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -817,12 +840,16 @@ document.addEventListener("DOMContentLoaded", function(){
 </body>
 </html>
 `;
-// Download HTML
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "index.html";
-  a.click();
+navigator.clipboard.writeText(htmlContent)
+  .then(() => {
+    downloadBtn.textContent = "Copied Successfully ✓";
+    setTimeout(() => {
+      downloadBtn.textContent = "Copy HTML";
+    }, 2000);
+  })
+  .catch(() => {
+    alert("Copy failed. Please try again.");
+  });
 };
 cardColor.oninput =
 accentColor.oninput =
@@ -863,6 +890,8 @@ headingLevelSelect.onchange = () => {
   globalHeadingLevel = headingLevelSelect.value;
   renderPreview();
 };
+
+
 
 updateRangeFill(widthRange);
 updateRangeFill(radiusRange);
