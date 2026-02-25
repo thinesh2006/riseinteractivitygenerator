@@ -639,25 +639,15 @@ panel.style.fontSize = bodyFontSize + "px";;
 downloadBtn.onclick = async function () {
 
   const clone = previewFrame.cloneNode(true);
-  clone.querySelectorAll(".accordion").forEach(acc => {
+  clone.querySelectorAll(".panel").forEach(panel=>{
+  panel.style.height = "";
+  panel.style.transition = "";
+  panel.style.opacity = "";
+  panel.style.padding = "";
+});
 
-  const oldButton = acc.querySelector("button");
-  if (!oldButton) return;
-
-  const titleText = oldButton.textContent.trim();
-
-  // Create new structure: h2 > button
- const newHeading = document.createElement(globalHeadingLevel);
-  const newButton = document.createElement("button");
-
-  newButton.textContent = titleText;
-  newButton.setAttribute("aria-expanded", "false");
-
-  newHeading.appendChild(newButton);
-
-  // Replace old button
-  acc.replaceChild(newHeading, oldButton);
-
+clone.querySelectorAll("button").forEach(btn=>{
+  btn.removeAttribute("style");
 });
   const images = clone.querySelectorAll("img");
 
@@ -720,6 +710,9 @@ body{
   overflow:hidden;
   margin-bottom:12px;
 }
+.accordion:last-child{
+  margin-bottom:0;
+}
 .accordion h1,
 .accordion h2,
 .accordion h3,
@@ -749,18 +742,26 @@ body{
 
 .panel{
   font-size:${bodyFontSize}px;
-  height:0;
+  max-height:0;
   overflow:hidden;
   opacity:0;
-  transition:height .4s ease, opacity .3s ease;
+  transition:max-height .4s ease, opacity .3s ease;
   padding:0 16px;
   line-height:1.6;
+  box-sizing:border-box;
 }
 
 .panel img{
   width:100%;
   display:block;
   margin:16px 0;
+}
+.wrapper{
+  margin-bottom:16px;
+}
+
+.wrapper:last-child{
+  margin-bottom:0;
 }
 </style>
 </head>
@@ -771,57 +772,42 @@ ${clone.innerHTML}
 </div>
 
 <script>
-const accordions = document.querySelectorAll(".accordion");
+document.addEventListener("DOMContentLoaded", function(){
 
-accordions.forEach((acc, index) => {
+  const accordions = document.querySelectorAll(".accordion");
 
-  const button = acc.querySelector("button");
-  const panel = acc.querySelector(".panel");
+  accordions.forEach((acc, index) => {
 
-  // Create unique ID
-  const panelId = "accordion-panel-" + index;
-  panel.id = panelId;
+    const button = acc.querySelector("button");
+    const panel = acc.querySelector(".panel");
 
-  // Accessibility connection
-  button.setAttribute("aria-controls", panelId);
-  button.setAttribute("aria-expanded","false");
+    panel.style.maxHeight = "0px";
+    panel.style.opacity = "0";
 
-  // Initial state
-  panel.style.height = "0px";
-  panel.style.opacity = "0";
-  panel.style.padding = "0 16px";
+    button.setAttribute("aria-expanded","false");
 
-  button.addEventListener("click", () => {
+    button.addEventListener("click", function(){
 
-    const isOpen = button.getAttribute("aria-expanded") === "true";
+      const isOpen = button.getAttribute("aria-expanded") === "true";
 
-    // Close all
-    document.querySelectorAll(".accordion").forEach((a,i) => {
-      const b = a.querySelector("button");
-      const p = a.querySelector(".panel");
-
-      b.setAttribute("aria-expanded","false");
-      p.style.height = "0px";
-      p.style.opacity = "0";
-      p.style.padding = "0 16px";
-    });
-
-    // Open clicked
-    if(!isOpen){
-
-      button.setAttribute("aria-expanded","true");
-
-      panel.style.padding = "0 16px 24px 16px";
-      panel.style.opacity = "1";
-
-      panel.style.height = "auto";
-      const height = panel.scrollHeight + "px";
-      panel.style.height = "0px";
-
-      requestAnimationFrame(()=>{
-        panel.style.height = height;
+      accordions.forEach(a=>{
+        const b = a.querySelector("button");
+        const p = a.querySelector(".panel");
+        b.setAttribute("aria-expanded","false");
+        p.style.maxHeight = "0px";
+        p.style.opacity = "0";
+		p.style.padding = "0 16px"; 
       });
-    }
+
+      if(!isOpen){
+  button.setAttribute("aria-expanded","true");
+
+  panel.style.padding = "0 16px 24px 16px";  // add only when open
+  panel.style.opacity = "1";
+  panel.style.maxHeight = panel.scrollHeight + "px";
+}
+
+    });
 
   });
 
